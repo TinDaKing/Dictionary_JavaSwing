@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="view.ScreenForm">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="f8915" class="javax.swing.JLabel">
+        <constraints/>
+        <properties>
+          <horizontalAlignment value="2"/>
+          <horizontalTextPosition value="10"/>
+          <text value="Word"/>
+          <verticalTextPosition value="1"/>
+        </properties>
+      </component>
+      <component id="8b1b2" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+        <constraints/>
+        <properties>
+          <editable value="true"/>
+          <enabled value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="cf5ba" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+        <constraints/>
+        <properties>
+          <model>
+            <item value="EngVie"/>
+            <item value="VieEng"/>
+          </model>
+        </properties>
+      </component>
+      <component id="34351" class="javax.swing.JButton" binding="searchButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <text value="Search"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
