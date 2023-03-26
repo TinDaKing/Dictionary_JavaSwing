@@ -108,10 +108,10 @@ public class EngViet {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(new File("dictionary.xml"));
+            StreamResult result = new StreamResult(new File("dictionaryEV.xml"));
             transformer.transform(source, result);
 
-            System.out.println("Done");
+            System.out.println("Write ok");
 
         } catch (Exception e) {
             e.printStackTrace();
