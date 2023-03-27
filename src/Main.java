@@ -1,9 +1,12 @@
 import dao.EngViet;
 import dao.FavoriteList;
 import dao.VietEng;
+import view.ScreenView;
 
 public class Main {
     public static void main(String[] args) {
-        FavoriteList.getInstance();
+
+        ScreenView sv = new ScreenView();
+
     }
 }

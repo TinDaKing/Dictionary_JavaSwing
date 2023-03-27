@@ -78,8 +78,8 @@ public class VietEng {
         return true;
     }
 
-    public String translateWord(String word) {
-        return dict.get(word);
+    public List<String> translateWord(String word) {
+        return reformatMeaningString(dict.get(word));
     }
 
     public boolean overwriteFile() {
@@ -118,6 +118,24 @@ public class VietEng {
             return false;
         }
         return true;
+    }
+    private List<String> reformatMeaningString(String meaning) {
+        if (meaning==null)
+            return null;
+
+        List<String> labels = new ArrayList<>();
+        int prePlace=0;
+        for (int i = 0; i < meaning.length(); i++) {
+            if (meaning.charAt(i) == '\n' && i<meaning.length()-1) {
+                labels.add(meaning.substring(prePlace, i));
+                prePlace=i+1;
+                if (meaning.charAt(i+1)=='*'){
+                    labels.add("\n");
+                }
+            }
+
+        }
+        return labels;
     }
 
 }

@@ -35,7 +35,7 @@ public class EngViet {
 
                     int minLen = Math.min(key1.length(), key2.length());
 
-                    while (i < minLen && (Character.compare(key1.charAt(i), key2.charAt(i))) == 0 ) {
+                    while (i < minLen && (Character.compare(key1.charAt(i), key2.charAt(i))) == 0) {
                         i++;
                     }
                     if (i == minLen) {
@@ -56,7 +56,7 @@ public class EngViet {
 
     private boolean readXMLFile() {
         try {
-            File inputFile = new File("src/Anh_Viet/Anh_Viet.xml");
+            File inputFile = new File("dictionary.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(inputFile);
@@ -78,8 +78,9 @@ public class EngViet {
         return true;
     }
 
-    public String translateWord(String word) {
-        return dict.get(word);
+    public List<String> translateWord(String word) {
+        // System.out.println(dict.get(word));
+        return reformatMeaningString(dict.get(word));
     }
 
     public boolean overwriteFile() {
@@ -118,6 +119,25 @@ public class EngViet {
             return false;
         }
         return true;
+    }
+
+    private List<String> reformatMeaningString(String meaning) {
+        if (meaning==null)
+            return null;
+
+        List<String> labels = new ArrayList<>();
+        int prePlace=0;
+        for (int i = 0; i < meaning.length(); i++) {
+            if (meaning.charAt(i) == '\n' && i<meaning.length()-1) {
+                labels.add(meaning.substring(prePlace, i));
+                prePlace=i+1;
+                if (meaning.charAt(i+1)=='*'){
+                    labels.add("\n");
+                }
+            }
+
+        }
+        return labels;
     }
 
 }
