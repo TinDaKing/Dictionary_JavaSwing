@@ -12,10 +12,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class FavoriteList {
     private SortedMap<String, String> dict;
@@ -38,7 +35,7 @@ public class FavoriteList {
 
                     int minLen = Math.min(key1.length(), key2.length());
 
-                    while (i < minLen && (Character.compare(key1.charAt(i), key2.charAt(i))) == 0 ) {
+                    while (i < minLen && (Character.compare(key1.charAt(i), key2.charAt(i))) == 0) {
                         i++;
                     }
                     if (i == minLen) {
@@ -51,7 +48,7 @@ public class FavoriteList {
             };
             dict = new TreeMap<>(comp);
 
-            if(!readXMLFile()){
+            if (!readXMLFile()) {
                 System.out.println("Favorite list empty!");
             }
         } catch (Exception e) {
@@ -77,16 +74,19 @@ public class FavoriteList {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
         return true;
     }
 
-    public Map<String, String> showList(){
+    public SortedMap<String, String> showList() {
         return dict;
     }
-    public String translateWord(String word) {
+
+    public String getMeaning(String word) {
+        if (dict == null) {
+            return null;
+        }
         return dict.get(word);
     }
 
@@ -116,15 +116,32 @@ public class FavoriteList {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(new File("dictionaryEV.xml"));
+            StreamResult result = new StreamResult(new File("favorite.xml"));
             transformer.transform(source, result);
-
             System.out.println("Write ok");
 
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+        return true;
+    }
+
+    public boolean addNewWordToFavorite(String word, String meaning) {
+        if (dict.get(word) != null) { // word existed
+            return false;
+        }
+        dict.put(word, meaning);
+        overwriteFile();
+        return true;
+    }
+
+    public boolean removeWordFromFavorite(String word) {
+        if (dict.get(word) == null) { // word not existed
+            return false;
+        }
+        dict.remove(word);
+        overwriteFile();
         return true;
     }
 

@@ -1,31 +1,49 @@
 package view;
 
 import dao.EngViet;
+import dao.FavoriteList;
 import dao.VietEng;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
 import java.util.List;
 
 public class ScreenView extends JFrame {
 
-    JPanel topBar;
-    JTextField searchField;
-    JComboBox languageList;
-    JButton searchButton;
-    JPanel midPanel;
-    JPanel leftBar;
-    JPanel rightBar;
-    JButton addNewWord;
-    JButton removeWord;
-    JComboBox dictType;
-    JTextField wordText;
-    JComboBox wordType;
-    JTextArea meaningText;
-    JButton submitAddWord;
-    JButton submitRemoveWord;
+    private JPanel topBar;
+    private JTextField searchField;
+    private JComboBox languageList;
+    private JButton searchButton;
+    private JPanel midPanel;
+    private JPanel leftBar;
+    private JPanel rightBar;
+    private JButton addNewWord;
+    private JButton removeWord;
+    private JComboBox dictType;
+    private JTextField wordText;
+    private JComboBox wordType;
+    private JTextArea meaningText;
+    private JButton submitAddWord;
+    private JButton submitRemoveWord;
+    private String currentWord = "";
+    private int currentLanguage;
+    private JButton addToFavorite;
+    private JButton viewFavorite;
+    private JButton sortUp;
+    private JButton sortDown;
+    private JPanel panelFavorite;
+
+    private ImageIcon icon = new ImageIcon("star.png");
+    private ImageIcon icon2 = new ImageIcon("star_yellow.png");
+    private ImageIcon icon3 = new ImageIcon("writing.png");
+    private ImageIcon icon4 = new ImageIcon("delete.png");
+    private ImageIcon icon5 = new ImageIcon("favorite.png");
+    private ImageIcon icon6 = new ImageIcon("ascending.png");
+    private ImageIcon icon7 = new ImageIcon("descending.png");
+
 
     public ScreenView() {
 
@@ -44,12 +62,13 @@ public class ScreenView extends JFrame {
         leftBar = new JPanel();
         leftBar.setLayout(new BoxLayout(leftBar, BoxLayout.Y_AXIS));
         leftBar.setBackground(new Color(20, 108, 148, 80));
-        leftBar.setPreferredSize(new Dimension(150, 100));
+        leftBar.setPreferredSize(new Dimension(180, 100));
         initLeftBar();
 
         rightBar = new JPanel();
         rightBar.setLayout(new BoxLayout(rightBar, BoxLayout.Y_AXIS));
-
+        rightBar.setPreferredSize(new Dimension(150, 100));
+        rightBar.setVisible(false);
 
         add(topBar, BorderLayout.NORTH);
         add(leftBar, BorderLayout.WEST);
@@ -97,6 +116,7 @@ public class ScreenView extends JFrame {
                     if (lng == 0) { // ENG_VIE
                         if (EngViet.getInstance().translateWord(searchField.getText()) == null) {
                             JOptionPane.showMessageDialog(null, "Cannot find your word! Please try again ^^");
+                            return;
                         } else {
                             List<String> labels = EngViet.getInstance().translateWord(searchField.getText());
                             for (String l : labels) {
@@ -109,6 +129,7 @@ public class ScreenView extends JFrame {
                     } else { //VIE_ENG
                         if (VietEng.getInstance().translateWord(searchField.getText()) == null) {
                             JOptionPane.showMessageDialog(null, "Cannot find your word! Please try again ^^");
+                            return;
                         } else {
                             List<String> labels = VietEng.getInstance().translateWord(searchField.getText());
                             for (String l : labels) {
@@ -120,7 +141,11 @@ public class ScreenView extends JFrame {
                     }
 
                     if (meaning != null) {
+                        currentWord = searchField.getText();
+                        currentLanguage = languageList.getSelectedIndex();
                         add(midPanel, BorderLayout.CENTER);
+                        initRightBar();
+                        rightBar.setVisible(true);
                         repaint();
                         setVisible(true);
                     }
@@ -135,18 +160,27 @@ public class ScreenView extends JFrame {
 
     private void initLeftBar() {
         addNewWord = new JButton("Add New Word");
+        addNewWord.setIcon(icon3);
         addNewWord.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         removeWord = new JButton("Remove Word ");
+        removeWord.setIcon(icon4);
         removeWord.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        viewFavorite = new JButton("View Favorite  ");
+        viewFavorite.setIcon(icon5);
+        viewFavorite.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         leftBar.add(new JLabel(" "));
         leftBar.add(addNewWord);
         leftBar.add(new JLabel(" "));
         leftBar.add(removeWord);
+        leftBar.add(new JLabel(" "));
+        leftBar.add(viewFavorite);
 
         addListenerAddNewWordButton();
         addListenerRemoveWordButton();
+        addListenerShowFavoriteButton();
     }
 
     private void addListenerAddNewWordButton() {
@@ -158,6 +192,7 @@ public class ScreenView extends JFrame {
                     } else {
                         midPanel.removeAll();
                     }
+                    rightBar.setVisible(false);
                     midPanel.setLayout(new BoxLayout(midPanel, BoxLayout.Y_AXIS));
 
                     String[] dicts = {"EngVie", "VieEng"};
@@ -207,10 +242,11 @@ public class ScreenView extends JFrame {
                     meaningText.setPreferredSize(new Dimension(300, 150));
                     meaningText.setWrapStyleWord(true);
                     meaningText.setLineWrap(true);
+                    JScrollPane jScrollPane = new JScrollPane(meaningText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
                     JPanel panel3 = new JPanel(new FlowLayout(10));
                     panel3.add(meaningLabel);
-                    panel3.add(meaningText);
+                    panel3.add(jScrollPane);
                     panel3.setAlignmentX(Component.LEFT_ALIGNMENT);
 
                     if (submitAddWord != null) {
@@ -281,7 +317,7 @@ public class ScreenView extends JFrame {
                         midPanel.removeAll();
                     }
                     midPanel.setLayout(new FlowLayout());
-
+                    rightBar.setVisible(false);
 
                     String[] dicts = {"EngVie", "VieEng"};
                     JLabel dictLabel = new JLabel("Dictionary: ");
@@ -357,6 +393,173 @@ public class ScreenView extends JFrame {
                     setVisible(true);
                     JOptionPane.showMessageDialog(null, "Delete successfully ^^");
 
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void addListenerShowFavoriteButton() {
+        viewFavorite.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (midPanel == null) {
+                        midPanel = new JPanel();
+                    } else {
+                        midPanel.removeAll();
+                    }
+                    midPanel.setLayout(null);
+
+                    rightBar.setVisible(false);
+
+                    Map<String, String> favList = FavoriteList.getInstance().showList();
+                    if (favList == null) {
+                        JOptionPane.showMessageDialog(null, "Favorite List is empty ^^");
+                        return;
+                    }
+                    sortUp = new JButton();
+                    sortUp.setIcon(icon6);
+                    sortDown = new JButton();
+                    sortDown.setIcon(icon7);
+
+                    addListenerSortUpButton();
+                    addListenerSortDownButton();
+
+                    JPanel panel1 = new JPanel();
+                    panel1.setLayout(new FlowLayout(10));
+                    panel1.add(sortUp);
+                    panel1.add(sortDown);
+
+                    panelFavorite = new JPanel();
+                    panelFavorite.setLayout(new BoxLayout(panelFavorite, BoxLayout.Y_AXIS));
+
+                    JLabel word;
+                    for (Map.Entry<String, String> entry : favList.entrySet()) {
+                        word= new JLabel(entry.getKey());
+                        word.setAlignmentX(Component.LEFT_ALIGNMENT);
+                        panelFavorite.add(word);
+                    }
+                    panel1.setBounds(0,0,300,60);
+                    panelFavorite.setBounds(5,60,300,500);
+
+
+                    midPanel.add(panel1);
+                    midPanel.add(panelFavorite);
+                    add(midPanel, BorderLayout.CENTER);
+                    repaint();
+                    setVisible(true);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void addListenerSortUpButton() {
+        sortUp.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    panelFavorite.removeAll();
+                    SortedMap<String, String> favList = FavoriteList.getInstance().showList();
+
+
+                    JLabel word;
+                    for (Map.Entry<String, String> entry : favList.entrySet()) {
+                        word= new JLabel(entry.getKey());
+                        word.setAlignmentX(Component.LEFT_ALIGNMENT);
+                        panelFavorite.add(word);
+                    }
+                    panelFavorite.setBounds(5,60,300,500);
+
+                    midPanel.add(panelFavorite);
+                    add(midPanel, BorderLayout.CENTER);
+                    repaint();
+                    setVisible(true);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public static <K extends Comparable, V> Map<K, V> sortByKeys(Map<K, V> map) {
+        Map<K, V> treeMap = new TreeMap<>(new Comparator<K>() {
+            @Override
+            public int compare(K a, K b) {
+                return b.compareTo(a);
+            }
+        });
+        treeMap.putAll(map);
+        return treeMap;
+    }
+
+    private void addListenerSortDownButton() {
+        sortDown.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    panelFavorite.removeAll();
+                    Map<String, String> favList = sortByKeys(FavoriteList.getInstance().showList());
+
+
+                    JLabel word;
+                    for (Map.Entry<String, String> entry : favList.entrySet()) {
+                        word = new JLabel(entry.getKey());
+                        word.setAlignmentX(Component.LEFT_ALIGNMENT);
+                        panelFavorite.add(word);
+                    }
+                    panelFavorite.setBounds(5,60,300,500);
+
+                    midPanel.add(panelFavorite);
+                    add(midPanel, BorderLayout.CENTER);
+                    repaint();
+                    setVisible(true);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void initRightBar() {
+
+        if (addToFavorite != null) {
+            rightBar.remove(addToFavorite);
+        }
+        addToFavorite = new JButton("Add to Favorite");
+
+        if (FavoriteList.getInstance().getMeaning(currentWord) == null) {
+            addToFavorite.setIcon(icon);
+        } else {
+            addToFavorite.setIcon(icon2);
+        }
+        addToFavorite.setAlignmentX(Component.CENTER_ALIGNMENT);
+        addListenerFavoriteWord();
+        rightBar.add(addToFavorite);
+
+    }
+
+    private void addListenerFavoriteWord() {
+        addToFavorite.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (FavoriteList.getInstance().getMeaning(currentWord) == null) { // does not have -> add
+                        if (currentLanguage == 0) { // English
+                            FavoriteList.getInstance().addNewWordToFavorite(currentWord, EngViet.getInstance().getMeaning(currentWord));
+                        } else { // Vietnamese
+                            FavoriteList.getInstance().addNewWordToFavorite(currentWord, VietEng.getInstance().getMeaning(currentWord));
+                        }
+                        addToFavorite.setIcon(icon2);
+                        JOptionPane.showMessageDialog(null, "Add to Favorite successfully ^^");
+
+                    } else {
+                        FavoriteList.getInstance().removeWordFromFavorite(currentWord);
+                        addToFavorite.setIcon(icon);
+                        JOptionPane.showMessageDialog(null, "Delete from Favorite successfully ^^");
+                    }
+                    repaint();
+                    setVisible(true);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
