@@ -18,6 +18,7 @@ public class ScreenView extends JFrame {
     private JComboBox languageList;
     private JButton searchButton;
     private JPanel midPanel;
+    private JScrollPane midContainer;
     private JPanel leftBar;
     private JPanel rightBar;
     private JButton addNewWord;
@@ -106,6 +107,8 @@ public class ScreenView extends JFrame {
                     if (midPanel == null) {
                         midPanel = new JPanel();
                     } else {
+                        if (midContainer!= null)
+                            remove(midContainer);
                         midPanel.removeAll();
                     }
                     midPanel.setLayout(new BoxLayout(midPanel, BoxLayout.Y_AXIS));
@@ -143,7 +146,10 @@ public class ScreenView extends JFrame {
                     if (meaning != null) {
                         currentWord = searchField.getText();
                         currentLanguage = languageList.getSelectedIndex();
-                        add(midPanel, BorderLayout.CENTER);
+
+                        midContainer= new JScrollPane(midPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+                        add(midContainer, BorderLayout.CENTER);
                         initRightBar();
                         rightBar.setVisible(true);
                         repaint();
@@ -190,6 +196,8 @@ public class ScreenView extends JFrame {
                     if (midPanel == null) {
                         midPanel = new JPanel();
                     } else {
+                        if (midContainer!= null)
+                            remove(midContainer);
                         midPanel.removeAll();
                     }
                     rightBar.setVisible(false);
@@ -294,7 +302,8 @@ public class ScreenView extends JFrame {
                             return;
                         }
                     }
-
+                    if (midContainer!= null)
+                        remove(midContainer);
                     midPanel.removeAll();
                     repaint();
                     setVisible(true);
@@ -314,6 +323,8 @@ public class ScreenView extends JFrame {
                     if (midPanel == null) {
                         midPanel = new JPanel();
                     } else {
+                        if (midContainer!= null)
+                            remove(midContainer);
                         midPanel.removeAll();
                     }
                     midPanel.setLayout(new FlowLayout());
@@ -387,7 +398,8 @@ public class ScreenView extends JFrame {
                             return;
                         }
                     }
-
+                    if (midContainer!= null)
+                        remove(midContainer);
                     midPanel.removeAll();
                     repaint();
                     setVisible(true);
@@ -407,6 +419,8 @@ public class ScreenView extends JFrame {
                     if (midPanel == null) {
                         midPanel = new JPanel();
                     } else {
+                        if (midContainer!= null)
+                            remove(midContainer);
                         midPanel.removeAll();
                     }
                     midPanel.setLayout(null);
