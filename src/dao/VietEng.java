@@ -56,7 +56,7 @@ public class VietEng {
 
     private boolean readXMLFile() {
         try {
-            File inputFile = new File("src/Viet_Anh/Viet_Anh.xml");
+            File inputFile = new File("dictionaryVE.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(inputFile);
@@ -120,22 +120,40 @@ public class VietEng {
         return true;
     }
     private List<String> reformatMeaningString(String meaning) {
-        if (meaning==null)
+        if (meaning == null)
             return null;
 
         List<String> labels = new ArrayList<>();
-        int prePlace=0;
+        int prePlace = 0;
         for (int i = 0; i < meaning.length(); i++) {
-            if (meaning.charAt(i) == '\n' && i<meaning.length()-1) {
+            if (meaning.charAt(i) == '\n' && i < meaning.length() - 1) {
                 labels.add(meaning.substring(prePlace, i));
-                prePlace=i+1;
-                if (meaning.charAt(i+1)=='*'){
+                prePlace = i + 1;
+                if (meaning.charAt(i + 1) == '*') {
                     labels.add("\n");
                 }
             }
-
         }
+        labels.add(meaning.substring(prePlace));
         return labels;
+    }
+
+    public boolean addNewWord(String word, String meaning) {
+        if (dict.get(word) != null){ // word existed
+            return false;
+        }
+        dict.put(word, meaning);
+        overwriteFile();
+        return true;
+    }
+
+    public boolean removeWord(String word) {
+        if (dict.get(word) == null){ // word not existed
+            return false;
+        }
+        dict.remove(word);
+        overwriteFile();
+        return true;
     }
 
 }
