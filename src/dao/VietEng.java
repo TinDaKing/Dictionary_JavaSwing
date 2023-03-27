@@ -81,6 +81,9 @@ public class VietEng {
     public List<String> translateWord(String word) {
         return reformatMeaningString(dict.get(word));
     }
+    public String getMeaning(String word) {
+        return dict.get(word);
+    }
 
     public boolean overwriteFile() {
         try {

@@ -82,6 +82,10 @@ public class EngViet {
         return reformatMeaningString(dict.get(word));
     }
 
+    public String getMeaning(String word) {
+        return dict.get(word);
+    }
+
     public boolean overwriteFile() {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
