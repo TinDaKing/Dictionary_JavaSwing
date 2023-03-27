@@ -37,13 +37,13 @@ public class ScreenView extends JFrame {
     private JButton sortDown;
     private JPanel panelFavorite;
 
-    private ImageIcon icon = new ImageIcon("star.png");
-    private ImageIcon icon2 = new ImageIcon("star_yellow.png");
-    private ImageIcon icon3 = new ImageIcon("writing.png");
-    private ImageIcon icon4 = new ImageIcon("delete.png");
-    private ImageIcon icon5 = new ImageIcon("favorite.png");
-    private ImageIcon icon6 = new ImageIcon("ascending.png");
-    private ImageIcon icon7 = new ImageIcon("descending.png");
+    private ImageIcon icon = new ImageIcon("images/star.png");
+    private ImageIcon icon2 = new ImageIcon("images/star_yellow.png");
+    private ImageIcon icon3 = new ImageIcon("images/writing.png");
+    private ImageIcon icon4 = new ImageIcon("images/delete.png");
+    private ImageIcon icon5 = new ImageIcon("images/favorite.png");
+    private ImageIcon icon6 = new ImageIcon("images/ascending.png");
+    private ImageIcon icon7 = new ImageIcon("images/descending.png");
 
 
     public ScreenView() {
