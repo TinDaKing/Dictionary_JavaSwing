@@ -6,3 +6,6 @@ In this project, I replicated a dictionary using Java Swing. CSC13102 Java Progr
 - Java Swing
 - OOP Singleton
 - Exception handling
+## How to Use
+- Double click to the file Dictionary20120385.jar to execute the project
+- Or use IDE and execute Main.java file in "src" folder
