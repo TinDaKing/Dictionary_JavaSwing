@@ -1,7 +1,9 @@
 package view;
 
+import com.toedter.calendar.JDateChooser;
 import dao.EngViet;
 import dao.FavoriteList;
+import dao.History;
 import dao.VietEng;
 
 import javax.swing.*;
@@ -36,6 +38,10 @@ public class ScreenView extends JFrame {
     private JButton sortUp;
     private JButton sortDown;
     private JPanel panelFavorite;
+    private JButton analyzeHistory;
+    private JDateChooser dateStart;
+    private JDateChooser dateEnd;
+    private JButton viewAnalyze;
 
     private ImageIcon icon = new ImageIcon("images/star.png");
     private ImageIcon icon2 = new ImageIcon("images/star_yellow.png");
@@ -44,6 +50,7 @@ public class ScreenView extends JFrame {
     private ImageIcon icon5 = new ImageIcon("images/favorite.png");
     private ImageIcon icon6 = new ImageIcon("images/ascending.png");
     private ImageIcon icon7 = new ImageIcon("images/descending.png");
+    private ImageIcon icon8 = new ImageIcon("images/trend.png");
 
 
     public ScreenView() {
@@ -107,7 +114,7 @@ public class ScreenView extends JFrame {
                     if (midPanel == null) {
                         midPanel = new JPanel();
                     } else {
-                        if (midContainer!= null)
+                        if (midContainer != null)
                             remove(midContainer);
                         midPanel.removeAll();
                     }
@@ -147,7 +154,9 @@ public class ScreenView extends JFrame {
                         currentWord = searchField.getText();
                         currentLanguage = languageList.getSelectedIndex();
 
-                        midContainer= new JScrollPane(midPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                        History.getInstance().addNewRecord(currentWord, new Date());
+
+                        midContainer = new JScrollPane(midPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
                         add(midContainer, BorderLayout.CENTER);
                         initRightBar();
@@ -177,16 +186,23 @@ public class ScreenView extends JFrame {
         viewFavorite.setIcon(icon5);
         viewFavorite.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        analyzeHistory = new JButton("Analyze Search");
+        analyzeHistory.setIcon(icon8);
+        analyzeHistory.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         leftBar.add(new JLabel(" "));
         leftBar.add(addNewWord);
         leftBar.add(new JLabel(" "));
         leftBar.add(removeWord);
         leftBar.add(new JLabel(" "));
         leftBar.add(viewFavorite);
+        leftBar.add(new JLabel(" "));
+        leftBar.add(analyzeHistory);
 
         addListenerAddNewWordButton();
         addListenerRemoveWordButton();
         addListenerShowFavoriteButton();
+        addListenerAnalyzeSearchButton();
     }
 
     private void addListenerAddNewWordButton() {
@@ -196,7 +212,7 @@ public class ScreenView extends JFrame {
                     if (midPanel == null) {
                         midPanel = new JPanel();
                     } else {
-                        if (midContainer!= null)
+                        if (midContainer != null)
                             remove(midContainer);
                         midPanel.removeAll();
                     }
@@ -302,7 +318,7 @@ public class ScreenView extends JFrame {
                             return;
                         }
                     }
-                    if (midContainer!= null)
+                    if (midContainer != null)
                         remove(midContainer);
                     midPanel.removeAll();
                     repaint();
@@ -323,7 +339,7 @@ public class ScreenView extends JFrame {
                     if (midPanel == null) {
                         midPanel = new JPanel();
                     } else {
-                        if (midContainer!= null)
+                        if (midContainer != null)
                             remove(midContainer);
                         midPanel.removeAll();
                     }
@@ -398,7 +414,7 @@ public class ScreenView extends JFrame {
                             return;
                         }
                     }
-                    if (midContainer!= null)
+                    if (midContainer != null)
                         remove(midContainer);
                     midPanel.removeAll();
                     repaint();
@@ -419,7 +435,7 @@ public class ScreenView extends JFrame {
                     if (midPanel == null) {
                         midPanel = new JPanel();
                     } else {
-                        if (midContainer!= null)
+                        if (midContainer != null)
                             remove(midContainer);
                         midPanel.removeAll();
                     }
@@ -450,12 +466,12 @@ public class ScreenView extends JFrame {
 
                     JLabel word;
                     for (Map.Entry<String, String> entry : favList.entrySet()) {
-                        word= new JLabel(entry.getKey());
+                        word = new JLabel(entry.getKey());
                         word.setAlignmentX(Component.LEFT_ALIGNMENT);
                         panelFavorite.add(word);
                     }
-                    panel1.setBounds(0,0,300,60);
-                    panelFavorite.setBounds(5,60,300,500);
+                    panel1.setBounds(0, 0, 300, 60);
+                    panelFavorite.setBounds(5, 60, 300, 500);
 
 
                     midPanel.add(panel1);
@@ -471,6 +487,87 @@ public class ScreenView extends JFrame {
         });
     }
 
+    private void addListenerAnalyzeSearchButton() {
+        analyzeHistory.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (midPanel == null) {
+                        midPanel = new JPanel();
+                    } else {
+                        if (midContainer != null)
+                            remove(midContainer);
+                        midPanel.removeAll();
+                    }
+
+                    midPanel.setLayout(new BoxLayout(midPanel, BoxLayout.Y_AXIS));
+                    rightBar.setVisible(false);
+
+                    JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.LEADING, 10, 10));
+                    dateStart = new JDateChooser();
+                    dateEnd = new JDateChooser();
+                    dateStart.setSize(60, 20);
+                    dateEnd.setSize(60, 20);
+
+                    viewAnalyze = new JButton("View");
+                    viewAnalyze.setBounds(new Rectangle(100, 20));
+
+                    panel1.add(new JLabel("Date start:"));
+                    panel1.add(dateStart);
+                    panel1.add(new JLabel("Date end:"));
+                    panel1.add(dateEnd);
+                    panel1.add(new JLabel("     "));
+                    panel1.add(viewAnalyze);
+                    midPanel.add(panel1);
+                    addListenerViewAnalyzeButton();
+
+                    add(midPanel, BorderLayout.CENTER);
+                    repaint();
+                    setVisible(true);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void addListenerViewAnalyzeButton() {
+        viewAnalyze.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (dateStart.getDate() == null || dateEnd.getDate() == null) {
+                        JOptionPane.showMessageDialog(null, "Please choose dates first ^^");
+                        return;
+                    }
+
+                    JPanel panel2 = new JPanel();
+                    panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
+
+                    Date start = dateStart.getDate();
+                    Date end = dateEnd.getDate();
+
+                    Map<String, Integer> wordCount = History.getInstance().getListWordsAndCount(start, end);
+
+                    JLabel label1;
+                    for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
+                        label1 = new JLabel(entry.getKey() + ": " + entry.getValue() + " times");
+                        panel2.add(label1);
+                    }
+
+                    midContainer = new JScrollPane(panel2);
+                    midPanel.add(midContainer);
+                    add(midPanel, BorderLayout.CENTER);
+                    repaint();
+                    setVisible(true);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+
+
     private void addListenerSortUpButton() {
         sortUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -481,11 +578,11 @@ public class ScreenView extends JFrame {
 
                     JLabel word;
                     for (Map.Entry<String, String> entry : favList.entrySet()) {
-                        word= new JLabel(entry.getKey());
+                        word = new JLabel(entry.getKey());
                         word.setAlignmentX(Component.LEFT_ALIGNMENT);
                         panelFavorite.add(word);
                     }
-                    panelFavorite.setBounds(5,60,300,500);
+                    panelFavorite.setBounds(5, 60, 300, 500);
 
                     midPanel.add(panelFavorite);
                     add(midPanel, BorderLayout.CENTER);
@@ -523,7 +620,7 @@ public class ScreenView extends JFrame {
                         word.setAlignmentX(Component.LEFT_ALIGNMENT);
                         panelFavorite.add(word);
                     }
-                    panelFavorite.setBounds(5,60,300,500);
+                    panelFavorite.setBounds(5, 60, 300, 500);
 
                     midPanel.add(panelFavorite);
                     add(midPanel, BorderLayout.CENTER);
@@ -580,4 +677,5 @@ public class ScreenView extends JFrame {
             }
         });
     }
+
 }
