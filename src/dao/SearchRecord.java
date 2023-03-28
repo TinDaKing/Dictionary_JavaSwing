@@ -1,11 +1,15 @@
 package dao;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
+import java.util.Objects;
 
 public class SearchRecord implements Serializable {
-    private String word;
     private Date dateSearch;
+    private String word;
 
     public SearchRecord(String word, Date dateSearch) {
         this.word = word;
@@ -26,5 +30,11 @@ public class SearchRecord implements Serializable {
 
     public void setDateSearch(Date dateSearch) {
         this.dateSearch = dateSearch;
+    }
+
+
+    @Override
+    public String toString() {
+        return word + " " +dateSearch.toString();
     }
 }

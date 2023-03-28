@@ -65,7 +65,7 @@ public class History {
     private int countWordInDate(String word, Date dateStart, Date dateEnd) {
         int count = 0;
         for (SearchRecord sr : searchRecords) {
-            if (sr.getWord() == word) {
+            if (sr.getWord().equals(word)) {
                 if (sr.getDateSearch().compareTo(dateStart) >= 0 && sr.getDateSearch().compareTo(dateEnd) <= 0) {
                     count++;
                 }
@@ -74,8 +74,8 @@ public class History {
         return count;
     }
 
-    private List<String> getWordInDate(Date start, Date end) {
-        List<String> words = new ArrayList<>();
+    private Set<String> getWordInDate(Date start, Date end) {
+        Set<String> words = new HashSet<>();
         for (SearchRecord sr : searchRecords) {
             if (sr.getDateSearch().compareTo(start) >= 0 && sr.getDateSearch().compareTo(end) <= 0) {
                 words.add(sr.getWord());
@@ -86,14 +86,18 @@ public class History {
 
     public Map<String, Integer> getListWordsAndCount(Date start, Date end) {
         Map<String, Integer> wordCount = new HashMap<>();
-        List<String> words = getWordInDate(start, end);
+        Set<String> words = getWordInDate(start, end);
+        if (words == null || words.isEmpty()) {
+            return null;
+        }
         for (String w : words) {
+            System.out.println(w+": "+countWordInDate(w, start, end));
             wordCount.put(w, countWordInDate(w, start, end));
         }
         return wordCount;
     }
 
-    public boolean overwriteFile() {
+    private boolean overwriteFile() {
         try {
             FileOutputStream file = new FileOutputStream(fileName);
             ObjectOutputStream os = new ObjectOutputStream(file);

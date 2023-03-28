@@ -535,6 +535,9 @@ public class ScreenView extends JFrame {
         viewAnalyze.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
+                    if (midContainer != null)
+                        midPanel.remove(midContainer);
+
                     if (dateStart.getDate() == null || dateEnd.getDate() == null) {
                         JOptionPane.showMessageDialog(null, "Please choose dates first ^^");
                         return;
@@ -547,6 +550,10 @@ public class ScreenView extends JFrame {
                     Date end = dateEnd.getDate();
 
                     Map<String, Integer> wordCount = History.getInstance().getListWordsAndCount(start, end);
+                    if (wordCount == null) {
+                        JOptionPane.showMessageDialog(null, "No words recorded as this period ^^");
+                        return;
+                    }
 
                     JLabel label1;
                     for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
@@ -554,7 +561,8 @@ public class ScreenView extends JFrame {
                         panel2.add(label1);
                     }
 
-                    midContainer = new JScrollPane(panel2);
+                    midContainer = new JScrollPane(panel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                    midContainer.setAlignmentY(TOP_ALIGNMENT);
                     midPanel.add(midContainer);
                     add(midPanel, BorderLayout.CENTER);
                     repaint();
